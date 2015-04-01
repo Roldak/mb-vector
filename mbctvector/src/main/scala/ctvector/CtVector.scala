@@ -1,13 +1,15 @@
-package mbctvector
+package ctvector
 
-class MbCtVector[T : ClassTag](var _size: Int) extends Buildable[T, MbCtVector] {
-  private var _capacity = MbCtVectorUtils.nextPowerOfTwo(_size) + 1
+import scala.reflect._
+
+class CtVector[T : ClassTag](var _size: Int) extends Buildable[T, CtVector] {
+  private var _capacity = CtVectorUtils.nextPowerOfTwo(_size) + 1
   private var _array = new Array[T](_capacity)
   
   def clear() = {
     _capacity = 1
     _size = 0
-    _array = Array.empty(_capacity)
+    _array = new Array[T](_capacity)
   }
   
   def capacity = _capacity
@@ -19,7 +21,7 @@ class MbCtVector[T : ClassTag](var _size: Int) extends Buildable[T, MbCtVector] 
       val copy = _array.clone()
       _capacity *= 2
       _array = new Array(_capacity)
-      MbCtVectorUtils.copyAll(copy, _array);
+      CtVectorUtils.copyAll(copy, _array);
     }
     
     _array(_size) = elem
@@ -30,7 +32,7 @@ class MbCtVector[T : ClassTag](var _size: Int) extends Buildable[T, MbCtVector] 
   def remove(index: Int) = {
     checkIndexBounds(index)
     
-    MbCtVectorUtils.shiftLeft(_array, index)
+    CtVectorUtils.shiftLeft(_array, index)
     
     _size -= 1
   }
@@ -45,8 +47,8 @@ class MbCtVector[T : ClassTag](var _size: Int) extends Buildable[T, MbCtVector] 
     _array(index) = elem
   }
   
-  override def iterator = new MbCtVectorIterator[T](this)
-  override def builder[K] = new MbCtVectorBuilder[K]
+  override def iterator = new CtVectorIterator[T](this)
+  override def builder[K : ClassTag] = new CtVectorBuilder[K]
   
   override def toString = {
     var str = "{"
@@ -64,7 +66,7 @@ class MbCtVector[T : ClassTag](var _size: Int) extends Buildable[T, MbCtVector] 
   }
 }
 
-protected object MbCtVectorUtils {
+protected object CtVectorUtils {
   def nextPowerOfTwo(i: Int): Int = {
     var x = i
     x |= x >> 1
@@ -76,10 +78,10 @@ protected object MbCtVectorUtils {
   }
   
   def copyAll[T](from: Array[T], to: Array[T]) = {
-    assert(from.length() < to.length())
+    assert(from.length < to.length)
     
     var i = 0
-    val len = from.length()
+    val len = from.length
     
     while (i < len) {
       to(i) = from(i)
@@ -89,7 +91,7 @@ protected object MbCtVectorUtils {
   
   def shiftLeft[T](ary: Array[T], fromIndex: Int) = {
     var i = fromIndex
-    val len = ary.length()
+    val len = ary.length
     
     while (i < len - 1) {
       ary(i) = ary(i + 1)
@@ -98,7 +100,7 @@ protected object MbCtVectorUtils {
   }
 }
 
-protected class MbCtVectorIterator[T](val vec: MbCtVector[T]) extends Iterator[T] {
+protected class CtVectorIterator[T](val vec: CtVector[T]) extends Iterator[T] {
   var i = 0
 	
   override def next: T = {
@@ -111,8 +113,8 @@ protected class MbCtVectorIterator[T](val vec: MbCtVector[T]) extends Iterator[T
   override def hasNext: Boolean = i < vec.length
 }
 
-protected class MbCtVectorBuilder[T] extends Builder[T, MbCtVector] {
-  var innerVec: MbCtVector[T] = new MbCtVector[T](0)
+protected class CtVectorBuilder[T : ClassTag] extends Builder[T, CtVector] {
+  var innerVec: CtVector[T] = new CtVector[T](0)
   
   override def append(elem: T) = innerVec.add(elem)
   override def finalise = innerVec
@@ -120,7 +122,7 @@ protected class MbCtVectorBuilder[T] extends Builder[T, MbCtVector] {
 
 object Main {
   def main(args: Array[String]) = {
-    val vec = new MbCtVector[Int](11)
+    val vec = new CtVector[Int](11)
 	
 	println(vec.capacity)
     vec(0) = 2
