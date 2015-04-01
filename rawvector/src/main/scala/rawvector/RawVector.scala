@@ -76,10 +76,10 @@ protected object RawVectorUtils {
   }
   
   def copyAll(from: Array[Any], to: Array[Any]) = {
-    assert(from.length() < to.length())
+    assert(from.length < to.length)
     
     var i = 0
-    val len = from.length()
+    val len = from.length
     
     while (i < len) {
       to(i) = from(i)
@@ -89,7 +89,7 @@ protected object RawVectorUtils {
   
   def shiftLeft(ary: Array[Any], fromIndex: Int) = {
     var i = fromIndex
-    val len = ary.length()
+    val len = ary.length
     
     while (i < len - 1) {
       ary(i) = ary(i + 1)
@@ -121,6 +121,9 @@ protected class RawVectorBuilder[T] extends Builder[T, RawVector] {
 object Main {
   def main(args: Array[String]) = {
     val vec = new RawVector[Int](11)
+	for (i <- 0 until vec.length) {
+	  vec(i) = 0
+	}
 	
 	println(vec.capacity)
     vec(0) = 2
