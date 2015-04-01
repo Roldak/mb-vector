@@ -1,5 +1,7 @@
 package ctvector
 
+import scala.reflect._
+
 class CtVector[T : ClassTag](var _size: Int) extends Buildable[T, CtVector] {
   private var _capacity = CtVectorUtils.nextPowerOfTwo(_size) + 1
   private var _array = new Array[T](_capacity)
@@ -7,7 +9,7 @@ class CtVector[T : ClassTag](var _size: Int) extends Buildable[T, CtVector] {
   def clear() = {
     _capacity = 1
     _size = 0
-    _array = Array.empty(_capacity)
+    _array = new Array[T](_capacity)
   }
   
   def capacity = _capacity
@@ -46,7 +48,7 @@ class CtVector[T : ClassTag](var _size: Int) extends Buildable[T, CtVector] {
   }
   
   override def iterator = new CtVectorIterator[T](this)
-  override def builder[K] = new CtVectorBuilder[K]
+  override def builder[K : ClassTag] = new CtVectorBuilder[K]
   
   override def toString = {
     var str = "{"
@@ -76,10 +78,10 @@ protected object CtVectorUtils {
   }
   
   def copyAll[T](from: Array[T], to: Array[T]) = {
-    assert(from.length() < to.length())
+    assert(from.length < to.length)
     
     var i = 0
-    val len = from.length()
+    val len = from.length
     
     while (i < len) {
       to(i) = from(i)
@@ -89,7 +91,7 @@ protected object CtVectorUtils {
   
   def shiftLeft[T](ary: Array[T], fromIndex: Int) = {
     var i = fromIndex
-    val len = ary.length()
+    val len = ary.length
     
     while (i < len - 1) {
       ary(i) = ary(i + 1)
@@ -111,7 +113,7 @@ protected class CtVectorIterator[T](val vec: CtVector[T]) extends Iterator[T] {
   override def hasNext: Boolean = i < vec.length
 }
 
-protected class CtVectorBuilder[T] extends Builder[T, CtVector] {
+protected class CtVectorBuilder[T : ClassTag] extends Builder[T, CtVector] {
   var innerVec: CtVector[T] = new CtVector[T](0)
   
   override def append(elem: T) = innerVec.add(elem)
