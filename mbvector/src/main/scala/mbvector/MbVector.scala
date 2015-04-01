@@ -2,7 +2,7 @@ package mbvector
 
 import MbArray._
 
-class MbVector[@miniboxed T](var _size: Int) extends Iterable[T] {
+class MbVector[@miniboxed T](var _size: Int) extends Buildable[T, MbVector] {
   private var _capacity = MbVector.nextPowerOfTwo(_size) + 1
   private var _array = MbArray.empty[T](_capacity)
   
@@ -48,6 +48,7 @@ class MbVector[@miniboxed T](var _size: Int) extends Iterable[T] {
   }
   
   override def iterator = new MbVectorIterator[T](this)
+  override def builder[@miniboxed K] = new MbVectorBuilder[K]
   
   override def toString = {
     var str = "{"
@@ -100,16 +101,23 @@ object MbVector {
 }
 
 class MbVectorIterator[@miniboxed T](val vec: MbVector[T]) extends Iterator[T] {
-	var i = 0
+  var i = 0
 	
-	override def next: T = {
-		assert(i < vec.length)
-		val elem = vec(i)
-		i += 1
-		elem
-	}
+  override def next: T = {
+	assert(i < vec.length)
+	val elem = vec(i)
+	i += 1
+	elem
+  }
 	
-	override def hasNext: Boolean = i < vec.length
+  override def hasNext: Boolean = i < vec.length
+}
+
+class MbVectorBuilder[@miniboxed T] extends Builder[T, MbVector] {
+  var innerVec: MbVector[T] = new MbVector[T](0)
+  
+  override def append(elem: T) = innerVec.add(elem)
+  override def finalise = innerVec
 }
 
 object Main {
@@ -123,7 +131,7 @@ object Main {
     vec(3) = 4
     vec(4) = 1202
 	
-	vec.foreach(x => println(x))
+	vec.map(x => 2 * x).foreach(x => println(x))
 	
 	for (i <- 0 to 50) {
 		vec.add(2)
