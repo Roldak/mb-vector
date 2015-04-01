@@ -3,7 +3,7 @@ package mbvector
 import MbArray._
 
 class MbVector[@miniboxed T](var _size: Int) extends Buildable[T, MbVector] {
-  private var _capacity = MbVector.nextPowerOfTwo(_size) + 1
+  private var _capacity = MbVectorUtils.nextPowerOfTwo(_size) + 1
   private var _array = MbArray.empty[T](_capacity)
   
   def clear() = {
@@ -21,7 +21,7 @@ class MbVector[@miniboxed T](var _size: Int) extends Buildable[T, MbVector] {
       val copy = _array.clone()
       _capacity *= 2
       _array = MbArray.empty[T](_capacity)
-      MbVector.copyAll(copy, _array);
+      MbVectorUtils.copyAll(copy, _array);
     }
     
     _array(_size) = elem
@@ -32,7 +32,7 @@ class MbVector[@miniboxed T](var _size: Int) extends Buildable[T, MbVector] {
   def remove(index: Int) = {
     checkIndexBounds(index)
     
-    MbVector.shiftLeft(_array, index)
+    MbVectorUtils.shiftLeft(_array, index)
     
     _size -= 1
   }
@@ -66,7 +66,7 @@ class MbVector[@miniboxed T](var _size: Int) extends Buildable[T, MbVector] {
   }
 }
 
-object MbVector {
+protected object MbVectorUtils {
   def nextPowerOfTwo(i: Int): Int = {
     var x = i
     x |= x >> 1
