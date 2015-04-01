@@ -14,13 +14,19 @@ object MyBuild extends Build {
     scalaVersion := "2.11.5"
   )
 
-  lazy val root = project.in(file(".")).aggregate(mbvector)
+  lazy val root = project.in(file(".")).aggregate(mbvector, benchmarks)
   
   lazy val mbvector = Project(
 	"mbvector",
 	file("mbvector"),
     settings = defaultSettings ++ miniboxingSettings
   )
+  
+  lazy val benchmarks = Project(
+	"benchmarks",
+	file("benchmarks"),
+	settings = defaultSettings ++ scalameterSettings
+  ).aggregate(mbvector).dependsOn(mbvector)
   
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
   
@@ -36,5 +42,12 @@ object MyBuild extends Build {
       //                       // transforming them into @miniboxed annotations
       Nil
     )
+  )
+  
+  lazy val scalameterSettings = Seq[Setting[_]](
+	resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/releases",
+	libraryDependencies += "com.storm-enroute" %% "scalameter" % "0.6",
+	testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework"),
+	parallelExecution in Test := false
   )
 }

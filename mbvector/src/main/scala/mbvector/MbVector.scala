@@ -100,7 +100,7 @@ protected object MbVectorUtils {
   }
 }
 
-class MbVectorIterator[@miniboxed T](val vec: MbVector[T]) extends Iterator[T] {
+protected class MbVectorIterator[@miniboxed T](val vec: MbVector[T]) extends Iterator[T] {
   var i = 0
 	
   override def next: T = {
@@ -113,7 +113,7 @@ class MbVectorIterator[@miniboxed T](val vec: MbVector[T]) extends Iterator[T] {
   override def hasNext: Boolean = i < vec.length
 }
 
-class MbVectorBuilder[@miniboxed T] extends Builder[T, MbVector] {
+protected class MbVectorBuilder[@miniboxed T] extends Builder[T, MbVector] {
   var innerVec: MbVector[T] = new MbVector[T](0)
   
   override def append(elem: T) = innerVec.add(elem)
@@ -139,12 +139,15 @@ object Main {
 	
 	println(vec.capacity)
     println(vec)
+	
 	vec.remove(3)
+	
 	println(vec)
 	
 	vec.filter(x => x%2 == 0).foreach(x => println(x))
 	
 	vec.clear()
+	
 	println(vec)
   }
 }
