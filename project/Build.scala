@@ -22,6 +22,24 @@ object MyBuild extends Build {
     settings = defaultSettings ++ miniboxingSettings
   )
   
+  lazy val mbctvector = Project(
+	"mbctvector",
+	file("mbctvector"),
+    settings = defaultSettings ++ miniboxingSettings
+  )
+  
+  lazy val nombctvector = Project(
+	"ctvector",
+	file("ctvector"),
+    settings = defaultSettings
+  )
+  
+  lazy val nombrawvector = Project(
+	"rawvector",
+	file("rawvector"),
+    settings = defaultSettings
+  )
+  
   lazy val benchmarks = Project(
 	"benchmarks",
 	file("benchmarks"),
