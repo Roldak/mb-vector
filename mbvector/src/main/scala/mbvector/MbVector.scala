@@ -133,13 +133,17 @@ object Main {
 	
 	vec.map(x => 2 * x).foreach(x => println(x))
 	
-	for (i <- 0 to 50) {
+	for (i <- 0 to 10) {
 		vec.add(2)
 	}
+	
 	println(vec.capacity)
     println(vec)
 	vec.remove(3)
 	println(vec)
+	
+	vec.filter(x => x%2 == 0).foreach(x => println(x))
+	
 	vec.clear()
 	println(vec)
   }

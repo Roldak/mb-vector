@@ -9,6 +9,18 @@ trait Buildable[@miniboxed T, Container[_]] extends Iterable[T] {
     while (it.hasNext) bd.append(f(it.next))
     bd.finalise
   }
+  
+  def filter(f: T => Boolean) = {
+    val bd = builder[T]
+    val it = iterator
+    while (it.hasNext) {
+	  val elem = it.next
+	  if (f(elem)) {
+	    bd.append(elem)
+	  }
+	}
+    bd.finalise
+  }
 }
 
 abstract class Builder[@miniboxed T, Container[_]] {
