@@ -1,0 +1,6 @@
+P=minibox\:log
+Xplugin=C\:\\Users\\Romain\\.ivy2\\cache\\org.scala-miniboxing.plugins\\miniboxing-plugin_2.11\\jars\\miniboxing-plugin_2.11-0.4-SNAPSHOT.jar
+eclipse.preferences.version=1
+scala.compiler.installation=592053016
+scala.compiler.sourceLevel=2.11
+scala.compiler.useProjectSettings=true
