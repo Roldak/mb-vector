@@ -7,11 +7,14 @@ object MbVectorBenchmark extends PerformanceTest.Quickbenchmark {
   
   val vectors = for {
     size <- sizes
-  } yield new MbVector(size)
+  } yield new MbVector[Int](size)
 
   performance of "MbVector" in {
     measure method "map" in {
-      using(vectors) in {
+      using(vectors) setUp {
+        v => v.map(_ + 1)
+             v.map(_ + 2)
+      } in {
         v => v.map(_ + 1)
       }
     }

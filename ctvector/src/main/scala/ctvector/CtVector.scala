@@ -17,7 +17,7 @@ class CtVector[T : ClassTag](var _size: Int) extends Buildable[T, CtVector] {
   def length = _size
   
   def add(elem: T) = {
-    if (_size >= _capacity) {      
+    if (_size >= _capacity) {
       val copy = _array.clone()
       _capacity *= 2
       _array = new Array(_capacity)

@@ -11,7 +11,10 @@ object CtVectorBenchmark extends PerformanceTest.Quickbenchmark {
 
   performance of "CtVector" in {
     measure method "map" in {
-      using(vectors) in {
+      using(vectors) setUp {
+        v => v.map(_ + 1)
+             v.map(_ + 2)
+      } in {
         v => v.map(_ + 1)
       }
     }
