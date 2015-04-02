@@ -46,6 +46,12 @@ object MyBuild extends Build {
 	settings = defaultSettings ++ scalameterSettings
   ).dependsOn(ctvector)
   
+  lazy val mbbenchmarks = Project(
+	"mbbenchmarks",
+	file("mbbenchmarks"),
+	settings = defaultSettings ++ scalameterSettings ++ miniboxingSettings
+  ).dependsOn(mbvector)
+  
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
   
   /** Settings for the miniboxing plugin */
