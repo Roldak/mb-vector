@@ -28,13 +28,13 @@ object MyBuild extends Build {
     settings = defaultSettings ++ miniboxingSettings
   )
   
-  lazy val nombctvector = Project(
+  lazy val ctvector = Project(
 	"ctvector",
 	file("ctvector"),
     settings = defaultSettings
   )
   
-  lazy val nombrawvector = Project(
+  lazy val rawvector = Project(
 	"rawvector",
 	file("rawvector"),
     settings = defaultSettings
@@ -44,7 +44,7 @@ object MyBuild extends Build {
 	"benchmarks",
 	file("benchmarks"),
 	settings = defaultSettings ++ scalameterSettings
-  ).aggregate(mbvector).dependsOn(mbvector)
+  ).dependsOn(ctvector)
   
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
   
