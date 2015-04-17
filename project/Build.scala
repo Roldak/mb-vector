@@ -18,37 +18,37 @@ object MyBuild extends Build {
   lazy val root = project.in(file(".")).aggregate(mbvector, benchmarks)
   
   lazy val mbvector = Project(
-	"mbvector",
+	"roldak-mbvector",
 	file("mbvector"),
     settings = defaultSettings ++ miniboxingSettings
   )
   
   lazy val mbctvector = Project(
-	"mbctvector",
+	"roldak-mbctvector",
 	file("mbctvector"),
     settings = defaultSettings ++ miniboxingSettings
   )
   
   lazy val ctvector = Project(
-	"ctvector",
+	"roldak-ctvector",
 	file("ctvector"),
     settings = defaultSettings
   )
   
   lazy val rawvector = Project(
-	"rawvector",
+	"roldak-rawvector",
 	file("rawvector"),
     settings = defaultSettings
   )
   
   lazy val benchmarks = Project(
-	"benchmarks",
+	"roldak-benchmarks",
 	file("benchmarks"),
 	settings = defaultSettings ++ scalameterSettings
   ).dependsOn(ctvector)
   
   lazy val mbbenchmarks = Project(
-	"mbbenchmarks",
+	"roldak-mbbenchmarks",
 	file("mbbenchmarks"),
 	settings = defaultSettings ++ scalameterSettings ++ miniboxingSettings
   ).dependsOn(mbvector)
