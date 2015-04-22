@@ -173,7 +173,7 @@ protected class MbVectorBuilder[@miniboxed T] extends Builder[T, MbVector] {
 object Benchmark {
   
   def vecSize = 1200000
-  def opCount = 10
+  def opCount = 20
   
   def makeVector(size: Int, fill: Int => Int) = {
     val vec = new MbVector[Int](size)
@@ -181,17 +181,24 @@ object Benchmark {
   }
   
   def time(opName: String, count: Int, init: => MbVector[Int], operation: MbVector[Int] => Unit) = {
-    var i = 0
-    println(opName + " : ")
-    while (i < count) {
+    var i = 1
+    var total = 0L
+    
+    println("MbVector. " + opName + " : ")
+    
+    while (i <= count) {
       val vec = init
       
       val start = System.currentTimeMillis()
       operation(vec)
-      println("\t" + i + " : " + (System.currentTimeMillis() - start) + "ms");
+      val end = System.currentTimeMillis()
+      println("\t" + i + ". : " + (end - start) + "ms");
       
+      total += end - start
       i += 1
     }
+    
+    println("Total : " + total + "ms\n")
   }
   
   def main(args: Array[String]) = {

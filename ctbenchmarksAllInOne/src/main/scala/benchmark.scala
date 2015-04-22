@@ -170,8 +170,44 @@ protected class CtVectorBuilder[T: ClassTag] extends Builder[T, CtVector] {
 
 // BENCHMARK
 
-object Main {
-  def main(args: Array[String]) = {
+object Benchmark {
 
+  def vecSize = 1200000
+  def opCount = 20
+  
+  def makeVector(size: Int, fill: Int => Int) = {
+    val vec = new CtVector[Int](size)
+    vec.map(fill)
+  }
+  
+  def time(opName: String, count: Int, init: => CtVector[Int], operation: CtVector[Int] => Unit) = {
+    var i = 1
+    var total = 0L
+    
+    println("CtVector. " + opName + " : ")
+    
+    while (i <= count) {
+      val vec = init
+      
+      val start = System.currentTimeMillis()
+      operation(vec)
+      val end = System.currentTimeMillis()
+      println("\t" + i + ". : " + (end - start) + "ms");
+      
+      total += end - start
+      i += 1
+    }
+    
+    println("Total : " + total + "ms\n")
+  }
+  
+  def main(args: Array[String]) = {
+    
+    time("map->filter->map", opCount, {
+      makeVector(vecSize, i => i)
+    }, {
+      _.map { _ * 2 }.filter { _ % 4 == 0 }.map { _ / 2 }
+    })
+    
   }
 }
