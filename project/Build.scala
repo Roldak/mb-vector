@@ -15,7 +15,7 @@ object MyBuild extends Build {
 	com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys.withSource := true
   )
 
-  lazy val root = project.in(file(".")).aggregate(mbvector, mbctvector, ctvector, rawvector, benchmarks, mbbenchmarks)
+  lazy val root = project.in(file(".")).aggregate(mbvector, mbctvector, ctvector, rawvector, benchmarks, mbbenchmarks, mbbenchmarksAllInOne, ctbenchmarksAllInOne)
   
   lazy val mbvector = Project(
 	"roldak-mbvector",
@@ -53,9 +53,19 @@ object MyBuild extends Build {
 	settings = defaultSettings ++ scalameterSettings ++ miniboxingSettings // ++ Seq(scalacOptions += "-Xprint:minibox-commit")
   ).dependsOn(mbvector)
   
+  lazy val ctbenchmarksAllInOne = Project(
+	"roldak-ctbenchmark-all-in-one",
+	file("ctbenchmarksAllInOne"),
+	settings = defaultSettings
+  )
+  
+  lazy val mbbenchmarksAllInOne = Project(
+	"roldak-mbbenchmark-all-in-one",
+	file("mbbenchmarksAllInOne"),
+	settings = defaultSettings ++ miniboxingSettings // ++ Seq(scalacOptions += "-Xprint:minibox-commit")
+  )
+  
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
-  
-  
   
   /** Settings for the miniboxing plugin */
   lazy val miniboxingSettings = Seq[Setting[_]](

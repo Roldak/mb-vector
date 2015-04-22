@@ -2,7 +2,7 @@ package ctvector
 
 import scala.reflect._
 
-class CtVector[T : ClassTag](var _size: Int) extends Buildable[T, CtVector] {
+class CtVector[T: ClassTag](var _size: Int) extends Buildable[T, CtVector] {
   private var _capacity = CtVectorUtils.nextPowerOfTwo(_size) + 1
   private var _array = new Array[T](_capacity)
 
@@ -48,7 +48,7 @@ class CtVector[T : ClassTag](var _size: Int) extends Buildable[T, CtVector] {
   }
 
   override def iterator = new CtVectorIterator[T](this)
-  override def builder[K : ClassTag] = new CtVectorBuilder[K]
+  override def builder[K: ClassTag] = new CtVectorBuilder[K]
 
   override def toString = {
     var str = "{"
@@ -104,16 +104,16 @@ protected class CtVectorIterator[T](val vec: CtVector[T]) extends Iterator[T] {
   var i = 0
 
   override def next: T = {
-  assert(i < vec.length)
-  val elem = vec(i)
-  i += 1
-  elem
+    assert(i < vec.length)
+    val elem = vec(i)
+    i += 1
+    elem
   }
 
   override def hasNext: Boolean = i < vec.length
 }
 
-protected class CtVectorBuilder[T : ClassTag] extends Builder[T, CtVector] {
+protected class CtVectorBuilder[T: ClassTag] extends Builder[T, CtVector] {
   var innerVec: CtVector[T] = new CtVector[T](0)
 
   override def append(elem: T) = innerVec.add(elem)
@@ -124,30 +124,30 @@ object Main {
   def main(args: Array[String]) = {
     val vec = new CtVector[Int](11)
 
-  println(vec.capacity)
+    println(vec.capacity)
     vec(0) = 2
     vec(1) = -1
     vec(2) = 12
     vec(3) = 4
     vec(4) = 1202
 
-  vec.map(x => 2 * x).foreach(x => println(x))
+    vec.map(x => 2 * x).foreach(x => println(x))
 
-  for (i <- 0 to 10) {
-    vec.add(2)
-  }
+    for (i <- 0 to 10) {
+      vec.add(2)
+    }
 
-  println(vec.capacity)
+    println(vec.capacity)
     println(vec)
 
-  vec.remove(3)
+    vec.remove(3)
 
-  println(vec)
+    println(vec)
 
-  vec.filter(x => x%2 == 0).foreach(x => println(x))
+    vec.filter(x => x % 2 == 0).foreach(x => println(x))
 
-  vec.clear()
+    vec.clear()
 
-  println(vec)
+    println(vec)
   }
 }

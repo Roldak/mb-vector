@@ -3,9 +3,9 @@ package ctvector
 import scala.reflect._
 
 trait Buildable[T, Container[_]] extends Iterable[T] {
-  def builder[K : ClassTag]: Builder[K, Container]
+  def builder[K: ClassTag]: Builder[K, Container]
 
-  def map[U : ClassTag](f: T => U) = {
+  def map[U: ClassTag](f: T => U) = {
     val bd = builder[U]
     val it = iterator
     while (it.hasNext) bd.append(f(it.next))
@@ -16,11 +16,11 @@ trait Buildable[T, Container[_]] extends Iterable[T] {
     val bd = builder[T]
     val it = iterator
     while (it.hasNext) {
-    val elem = it.next
-    if (f(elem)) {
-      bd.append(elem)
+      val elem = it.next
+      if (f(elem)) {
+        bd.append(elem)
+      }
     }
-  }
     bd.finalise
   }
 }

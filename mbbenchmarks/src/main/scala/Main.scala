@@ -8,8 +8,7 @@ object MbVectorBenchmark extends PerformanceTest.Quickbenchmark {
   override def executor = new org.scalameter.execution.LocalExecutor(
     Warmer.Default(),
     Aggregator.average,
-    measurer
-  )
+    measurer)
 
   val vectors = for {
     size <- sizes
