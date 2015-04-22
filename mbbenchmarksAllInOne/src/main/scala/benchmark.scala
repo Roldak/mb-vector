@@ -170,8 +170,37 @@ protected class MbVectorBuilder[@miniboxed T] extends Builder[T, MbVector] {
 
 // BENCHMARK
 
-object Main {
+object Benchmark {
+  
+  def vecSize = 1200000
+  def opCount = 10
+  
+  def makeVector(size: Int, fill: Int => Int) = {
+    val vec = new MbVector[Int](size)
+    vec.map(fill)
+  }
+  
+  def time(opName: String, count: Int, init: => MbVector[Int], operation: MbVector[Int] => Unit) = {
+    var i = 0
+    println(opName + " : ")
+    while (i < count) {
+      val vec = init
+      
+      val start = System.currentTimeMillis()
+      operation(vec)
+      println("\t" + i + " : " + (System.currentTimeMillis() - start) + "ms");
+      
+      i += 1
+    }
+  }
+  
   def main(args: Array[String]) = {
-
+    
+    time("map->filter->map", opCount, {
+      makeVector(vecSize, i => i)
+    }, {
+      _.map { _ * 2 }.filter { _ % 4 == 0 }.map { _ / 2 }
+    })
+    
   }
 }
