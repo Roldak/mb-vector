@@ -16,7 +16,7 @@ class RawVector[T](var _size: Int) extends Buildable[T, RawVector] {
   
   def add(elem: T) = {
     if (_size >= _capacity) {      
-      val copy = _array.clone()
+      val copy = _array
       _capacity *= 2
       _array = new Array(_capacity)
       RawVectorUtils.copyAll(copy, _array);
