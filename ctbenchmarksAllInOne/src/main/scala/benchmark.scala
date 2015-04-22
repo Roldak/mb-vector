@@ -172,7 +172,7 @@ protected class CtVectorBuilder[T: ClassTag] extends Builder[T, CtVector] {
 
 object Benchmark {
 
-  def vecSize = 1200000
+  def vecSize = 10000000
   def opCount = 20
   
   def makeVector(size: Int, fill: Int => Int) = {
@@ -198,15 +198,15 @@ object Benchmark {
       i += 1
     }
     
-    println("Total : " + total + "ms\n")
+    println("Total : " + total + "ms. Average " + (total.toDouble / count) + ".\n")
   }
   
   def main(args: Array[String]) = {
     
-    time("map->filter->map", opCount, {
+    time("map", opCount, {
       makeVector(vecSize, i => i)
     }, {
-      _.map { _ * 2 }.filter { _ % 4 == 0 }.map { _ / 2 }
+      _.map { _ * 2 }
     })
     
   }
