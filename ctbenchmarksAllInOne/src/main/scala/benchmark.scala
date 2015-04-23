@@ -187,13 +187,16 @@ object Benchmark {
     println("CtVector. " + opName + " : ")
     
     while (i <= count) {
-      val vec = init
+      var vec = init
       
       val start = System.currentTimeMillis()
       operation(vec)
       val end = System.currentTimeMillis()
       println("\t" + i + ". : " + (end - start) + "ms");
       
+      vec = null
+      System.gc()
+
       total += end - start
       i += 1
     }
