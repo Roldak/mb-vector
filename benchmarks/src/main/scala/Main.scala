@@ -12,7 +12,7 @@ object CtVectorBenchmark extends PerformanceTest.Quickbenchmark {
 
   val vectors = for {
     size <- sizes
-  } yield new CtVector[Long](size)
+  } yield new CtVector[Int](size)
 
   performance of "CtVector" in {
     measure method "map" in {

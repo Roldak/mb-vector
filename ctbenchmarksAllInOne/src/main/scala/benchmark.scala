@@ -1,4 +1,5 @@
 import scala.reflect._
+import scala.util._
 
 // ITERABLE
 
@@ -173,14 +174,20 @@ protected class CtVectorBuilder[T: ClassTag] extends Builder[T, CtVector] {
 object Benchmark {
 
   def vecSize = 10000000
-  def opCount = 20
+  def opCount = 3
+  def rnd = new Random(42)
   
-  def makeVector(size: Int, fill: Int => Int) = {
-    val vec = new CtVector[Int](size)
-    vec.map(fill)
+  def makeVector(size: Int) = {
+    val vec = new CtVector[Boolean](size)
+    var i = 0
+    while (i < vec.length) {
+      vec(i) = rnd.nextBoolean()
+      i += 1
+    }
+    vec
   }
   
-  def time(opName: String, count: Int, init: => CtVector[Int], operation: CtVector[Int] => Unit) = {
+  def time(opName: String, count: Int, init: => CtVector[Boolean], operation: CtVector[Boolean] => Unit) = {
     var i = 1
     var total = 0L
     
@@ -190,26 +197,28 @@ object Benchmark {
       var vec = init
       
       val start = System.currentTimeMillis()
-      operation(vec)
-      val end = System.currentTimeMillis()
-      println("\t" + i + ". : " + (end - start) + "ms");
       
+      operation(vec)
       vec = null
       System.gc()
-
-      total += end - start
+      
+      val end = System.currentTimeMillis()
+      
+      println("\t" + i + ". : " + (end - start) + "ms");
+      
       i += 1
+      total += end - start
     }
     
-    println("Total : " + total + "ms. Average " + (total.toDouble / count) + ".\n")
+    println("Total : " + total + "ms. Average " + (total.toDouble / count) + "ms.\n")
   }
   
   def main(args: Array[String]) = {
     
     time("map", opCount, {
-      makeVector(vecSize, i => i)
+      makeVector(vecSize)
     }, {
-      _.map { _ * 2 }
+      _.map{ !_ } 
     })
     
   }

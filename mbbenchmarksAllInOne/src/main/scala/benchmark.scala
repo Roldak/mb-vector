@@ -1,4 +1,5 @@
 import MbArray._
+import scala.util._
 
 // ITERABLE
 
@@ -53,6 +54,7 @@ abstract class Builder[@miniboxed T, Container[_]] {
 class MbVector[@miniboxed T](var _size: Int) extends Buildable[T, MbVector] {
   private var _capacity = MbVectorUtils.nextPowerOfTwo(_size) + 1
   private var _array = MbArray.empty[T](_capacity)
+  println(_array.getClass)
 
   def clear() = {
     _capacity = 1
@@ -173,14 +175,20 @@ protected class MbVectorBuilder[@miniboxed T] extends Builder[T, MbVector] {
 object Benchmark {
   
   def vecSize = 10000000
-  def opCount = 20
+  def opCount = 3
+  def rnd = new Random(42)
   
-  def makeVector(size: Int, fill: Int => Int) = {
-    val vec = new MbVector[Int](size)
-    vec.map(fill)
+  def makeVector(size: Int) = {
+    val vec = new MbVector[Boolean](size)
+    var i = 0
+    while (i < vec.length) {
+      vec(i) = rnd.nextBoolean()
+      i += 1
+    }
+    vec
   }
   
-  def time(opName: String, count: Int, init: => MbVector[Int], operation: MbVector[Int] => Unit) = {
+  def time(opName: String, count: Int, init: => MbVector[Boolean], operation: MbVector[Boolean] => Unit) = {
     var i = 1
     var total = 0L
     
@@ -190,26 +198,28 @@ object Benchmark {
       var vec = init
       
       val start = System.currentTimeMillis()
+      
       operation(vec)
-      val end = System.currentTimeMillis()
-      println("\t" + i + ". : " + (end - start) + "ms");
-
       vec = null
       System.gc()
       
-      total += end - start
+      val end = System.currentTimeMillis()
+      
+      println("\t" + i + ". : " + (end - start) + "ms");
+      
       i += 1
+      total += end - start
     }
     
-    println("Total : " + total + "ms. Average " + (total.toDouble / count) + ".\n")
+    println("Total : " + total + "ms. Average " + (total.toDouble / count) + "ms.\n")
   }
   
   def main(args: Array[String]) = {
     
     time("map", opCount, {
-      makeVector(vecSize, i => i)
+      makeVector(vecSize)
     }, {
-      _.map { _ * 2 }
+      _.map { !_ }
     })
     
   }

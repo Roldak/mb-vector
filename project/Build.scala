@@ -3,7 +3,7 @@ import Keys._
 
 object MyBuild extends Build {
 
-  scalaVersion in ThisBuild := "2.11.5"
+  scalaVersion in ThisBuild := "2.11.6"
   
   lazy val defaultSettings = Defaults.defaultSettings ++ Seq[Setting[_]](
     organization := "ch.epfl.lamp",
@@ -11,8 +11,16 @@ object MyBuild extends Build {
     // The plugin requires the latest version of the scalac compiler. You
     // can use older compilers, but before reporting a bug, please check
     // that it can be reproduced with the latest version of the compiler.
-    scalaVersion := "2.11.5",
+    scalaVersion := "2.11.6",
 	com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys.withSource := true
+  )
+  
+  lazy val showGcCyclesSetting = Seq[Setting[_]](
+	fork := true,
+	javaOptions += "-XX:+PrintGC",
+	javaOptions += "-verbose:gc",
+	javaOptions += "-Xms512m",
+	javaOptions += "-Xmx512m"
   )
 
   lazy val root = project.in(file(".")).aggregate(mbvector, mbctvector, ctvector, rawvector, benchmarks, mbbenchmarks, mbbenchmarksAllInOne, ctbenchmarksAllInOne)
@@ -20,13 +28,13 @@ object MyBuild extends Build {
   lazy val mbvector = Project(
 	"roldak-mbvector",
 	file("mbvector"),
-    settings = defaultSettings ++ miniboxingSettings // ++ Seq(scalacOptions += "-Xprint:minibox-commit")
+    settings = defaultSettings ++ oldminiboxingSettings // ++ Seq(scalacOptions += "-Xprint:minibox-commit")
   )
   
   lazy val mbctvector = Project(
 	"roldak-mbctvector",
 	file("mbctvector"),
-    settings = defaultSettings ++ miniboxingSettings
+    settings = defaultSettings ++ oldminiboxingSettings
   )
   
   lazy val ctvector = Project(
@@ -50,19 +58,19 @@ object MyBuild extends Build {
   lazy val mbbenchmarks = Project(
 	"roldak-mbbenchmarks",
 	file("mbbenchmarks"),
-	settings = defaultSettings ++ scalameterSettings ++ miniboxingSettings // ++ Seq(scalacOptions += "-Xprint:minibox-commit")
+	settings = defaultSettings ++ scalameterSettings ++ oldminiboxingSettings // ++ Seq(scalacOptions += "-Xprint:minibox-commit")
   ).dependsOn(mbvector)
   
   lazy val ctbenchmarksAllInOne = Project(
 	"roldak-ctbenchmark-all-in-one",
 	file("ctbenchmarksAllInOne"),
-	settings = defaultSettings
+	settings = defaultSettings ++ showGcCyclesSetting
   )
   
   lazy val mbbenchmarksAllInOne = Project(
 	"roldak-mbbenchmark-all-in-one",
 	file("mbbenchmarksAllInOne"),
-	settings = defaultSettings ++ miniboxingSettings // ++ Seq(scalacOptions += "-Xprint:minibox-commit")
+	settings = defaultSettings ++ oldminiboxingSettings ++ showGcCyclesSetting // ++ Seq(scalacOptions += "-Xprint:minibox-commit")
   )
   
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
@@ -72,6 +80,20 @@ object MyBuild extends Build {
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies += "org.scala-miniboxing.plugins" %% "miniboxing-runtime" % "0.4-SNAPSHOT",
     addCompilerPlugin("org.scala-miniboxing.plugins" %% "miniboxing-plugin" % "0.4-SNAPSHOT"),
+    scalacOptions ++= (
+      //"-P:minibox:log" ::    // enable the miniboxing plugin output
+      //                       // (which explains what the plugin is doing)
+      //"-P:minibox:hijack" :: // enable hijacking the @specialized annotations
+      //                       // transforming them into @miniboxed annotations
+      Nil
+    )
+  )
+  
+  /** Settings for the miniboxing plugin */
+  lazy val oldminiboxingSettings = Seq[Setting[_]](
+    resolvers += Resolver.sonatypeRepo("releases"),
+    libraryDependencies += "org.scala-miniboxing.plugins" %% "miniboxing-runtime" % "0.4-M3",
+    addCompilerPlugin("org.scala-miniboxing.plugins" %% "miniboxing-plugin" % "0.4-M3"),
     scalacOptions ++= (
       //"-P:minibox:log" ::    // enable the miniboxing plugin output
       //                       // (which explains what the plugin is doing)
