@@ -174,20 +174,20 @@ protected class CtVectorBuilder[T: ClassTag] extends Builder[T, CtVector] {
 object Benchmark {
 
   def vecSize = 10000000
-  def opCount = 3
+  def opCount = 10
   def rnd = new Random(42)
   
   def makeVector(size: Int) = {
-    val vec = new CtVector[Boolean](size)
+    val vec = new CtVector[Int](size)
     var i = 0
     while (i < vec.length) {
-      vec(i) = rnd.nextBoolean()
+      vec(i) = rnd.nextInt()
       i += 1
     }
     vec
   }
   
-  def time(opName: String, count: Int, init: => CtVector[Boolean], operation: CtVector[Boolean] => Unit) = {
+  def time(opName: String, count: Int, init: => CtVector[Int], operation: CtVector[Int] => Unit) = {
     var i = 1
     var total = 0L
     
@@ -196,15 +196,17 @@ object Benchmark {
     while (i <= count) {
       var vec = init
       
+      System.gc()
+      
       val start = System.currentTimeMillis()
       
       operation(vec)
       vec = null
-      System.gc()
       
       val end = System.currentTimeMillis()
       
       println("\t" + i + ". : " + (end - start) + "ms");
+      System.gc()
       
       i += 1
       total += end - start
@@ -218,7 +220,7 @@ object Benchmark {
     time("map", opCount, {
       makeVector(vecSize)
     }, {
-      _.map{ !_ } 
+      _.map{ _ * 2 } 
     })
     
   }
